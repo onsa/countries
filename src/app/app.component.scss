@@ -1,0 +1,11 @@
+:host {
+  #dropdown-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+
+    label {
+      margin-right: 16px;
+    }
+  }
+}

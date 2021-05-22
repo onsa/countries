@@ -1,12 +1,14 @@
 //  Angular imports
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 //  Application imports
 import { AppComponent } from './app.component';
 
 describe('AppComponent', (): void => {
-  beforeEach(async (): Promise<void> => {
-    await TestBed.configureTestingModule({
+  let component: AppComponent;
+
+  beforeEach(waitForAsync((): void => {
+    TestBed.configureTestingModule({
       imports: [
         RouterTestingModule
       ],
@@ -14,11 +16,12 @@ describe('AppComponent', (): void => {
         AppComponent
       ],
     }).compileComponents();
-  });
+
+    const fixture: ComponentFixture<AppComponent> = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+  }));
 
   it('should create the app', (): void => {
-    const fixture: ComponentFixture<AppComponent> = TestBed.createComponent(AppComponent);
-    const app: AppComponent = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 });
