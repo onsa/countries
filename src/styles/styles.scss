@@ -1,0 +1,58 @@
+@import "variables";
+
+* {
+  outline: none;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: $colour-highlight;
+}
+
+input {
+  height: $height-input;
+  padding: $height-input / 8;
+  color: $colour-highlight;
+  border: 1px solid $colour-highlight;
+
+  &::placeholder {
+    color: $colour-highlight;
+    opacity: 1; /* For Firefox */
+  }
+
+  &::-ms-input-placeholder {  // sass-lint:disable-line no-vendor-prefixes
+    color: $colour-highlight; /* For Microsoft Edge */
+  }
+}
+
+/*** Works on common browsers ***/
+::selection {
+  color: $colour-highlight;
+  background-color: $colour-background;
+}
+
+/*** Mozilla based browsers ***/
+// sass-lint:disable no-vendor-prefixes
+::-moz-selection {
+  color: $colour-highlight;
+  background-color: $colour-background;
+}
+
+/***For Other Browsers ***/
+::-o-selection {
+  color: $colour-highlight;
+  background-color: $colour-background;
+}
+
+::-ms-selection {
+  color: $colour-highlight;
+  background-color: $colour-background;
+}
+
+/*** For Webkit ***/
+::-webkit-selection {
+  color: $colour-highlight;
+  background-color: $colour-background;
+}
+// sass-lint:enable no-vendor-prefixes

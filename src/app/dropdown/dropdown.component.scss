@@ -1,0 +1,62 @@
+@import "~src/styles/variables";
+@import "~src/styles/caret";
+
+:host {
+  position: relative;
+  display: inline-block;
+
+  // height - borders
+  @include caret($height-input - 2 * 2, down);
+
+  & > form {
+    &.open {
+      z-index: 1;
+
+      .list-container {
+        display: block;
+        overflow-y: auto;
+      }
+    }
+
+    input {
+      width: 100%;
+      cursor: pointer;
+      background-color: $colour-background;
+      user-select: none;
+    }
+
+    .list-container {
+      position: absolute;
+      z-index: 5;
+      display: none;
+      width: 100%;
+      background-color: $colour-background;
+      box-shadow: 0 1px 3px $colour-highlight;
+    }
+
+    ul {
+      width: 100%;
+      min-width: max-content;
+      padding: 0;
+      margin: 1px 0 0;
+      border: 1px solid $colour-highlight;
+
+      li {
+        width: 100%;
+        min-width: fit-content;
+        padding: 2px $height-input / 4;
+        white-space: nowrap;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          background-color: $colour-highlight;
+
+          span {
+            color: $colour-background;
+          }
+        }
+      }
+    }
+  }
+}

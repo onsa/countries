@@ -1,0 +1,86 @@
+$size-caret: 5px;
+
+@mixin caret($height, $orientation) {
+  position: relative;
+
+  &::before {
+    position: absolute;
+    right: $height / 2 - 1;
+    bottom: $height / 2 - 1;
+    content: "";
+
+    @if $orientation == up {
+      border-right: $size-caret solid transparent;
+      border-bottom: $size-caret solid $colour-highlight;
+      border-left: $size-caret solid transparent;
+    } @else if $orientation == down {
+      border-top: $size-caret solid $colour-highlight;
+      border-right: $size-caret solid transparent;
+      border-left: $size-caret solid transparent;
+    } @else {
+      @error "Unknown orientation '#{$orientation}'.";
+    }
+  }
+
+  &:after {
+    position: absolute;
+    right: $height / 2;
+    content: "";
+
+    @if $orientation == up {
+      bottom: $height / 2 - 1;
+      border-right: $size-caret - 1 solid transparent;
+      border-bottom: $size-caret - 1 solid $colour-background;
+      border-left: $size-caret - 1 solid transparent;
+    } @else if $orientation == down {
+      bottom: $height / 2;
+      border-top: $size-caret - 1 solid $colour-background;
+      border-right: $size-caret - 1 solid transparent;
+      border-left: $size-caret - 1 solid transparent;
+    } @else {
+      @error "Unknown orientation '#{$orientation}'.";
+    }
+  }
+}
+
+@mixin pager {
+  position: absolute;
+  top: 50%;
+  cursor: pointer;
+  border-top: $size-arrow solid transparent;
+  border-bottom: $size-arrow solid transparent;
+  transform: translateY(-50%);
+
+  &::after {
+    position: absolute;
+    border-top: $size-arrow solid transparent;
+    border-bottom: $size-arrow solid transparent;
+    content: "";
+  }
+}
+
+@mixin previous {
+  @include pager;
+
+  left: -1.5 * $size-arrow;
+  border-right: $size-arrow solid $colour-highlight;
+
+  &::after {
+    top: -1 * $size-arrow;
+    left: 3px;
+    border-right: $size-arrow - 1 solid $colour-background;
+  }
+}
+
+@mixin next {
+  @include pager;
+
+  right: -1.5 * $size-arrow;
+  border-left: $size-arrow solid $colour-highlight;
+
+  &::after {
+    top: -1 * $size-arrow;
+    right: 3px;
+    border-left: $size-arrow solid $colour-background;
+  }
+}
