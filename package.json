@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --code-coverage=true",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src && sass-lint 'src/**/*.scss' -v",
+    "check": "ng test --code-coverage=true --watch=false && npm run lint && npm run build",
     "sort-import": "sort-import"
   },
   "private": true,
