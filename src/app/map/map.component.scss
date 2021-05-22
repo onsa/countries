@@ -1,0 +1,19 @@
+@import "~src/styles/variables";
+
+:host {
+  display: block;
+  height: 100%;
+
+  #map-frame {
+    fill: transparent;
+  }
+
+  .land {
+    fill: $colour-background;
+    stroke: $colour-highlight;
+
+    &.highlighted {
+      fill: lighten($colour-highlight, 8%);
+    }
+  }
+}

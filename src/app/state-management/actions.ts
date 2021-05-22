@@ -7,3 +7,9 @@ export class PickContinent {
 
   constructor(public continent: Continent) { }
 }
+
+export class HighlightCountry {
+  public static readonly type: string = 'HighlightCountry';
+
+  constructor(public country: string) { }
+}

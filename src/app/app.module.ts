@@ -7,12 +7,14 @@ import { ApplicationState } from './state-management/application-state';
 import { AppRoutingModule } from './app-routing.module';
 import { DropdownModule } from './dropdown/dropdown.module';
 import { environment } from '../environments/environment';
+import { MapComponent } from './map/map.component';
 //  Third party imports
 import { NgxsModule } from '@ngxs/store';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,
