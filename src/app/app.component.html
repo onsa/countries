@@ -1,9 +1,11 @@
-<ng-container>
+<ng-container *ngIf="(state$ | async); let state">
   <div id="dropdown-container">
     <div>
       <label for="continent-dropdown">Region</label>
       <countries-dropdown [elements]="selectableContinents"
+        [value]="state.selectedContinent"
         placeholder="Please select a region"
+        (selectElement)="pickContinent($event)"
         inputId="continent-dropdown">
         <ng-template #dropdownElementTemplate let-continent>
             {{ continent }}
