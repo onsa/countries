@@ -1,0 +1,16 @@
+<div id="close-button-container"><button (click)="closeEvent.emit()">&#10005;</button></div>
+
+<div *ngIf="!!country" id="details-container">
+  <table>
+    <tr><th>Name:</th><td>{{ country.name }}</td></tr>
+    <tr><th>Capital:</th><td>{{ country.capital }}</td></tr>
+    <tr><th>Population:</th><td>{{ country.population | number: '1.0-0' }}</td></tr>
+    <tr><th>Flag:</th><td><img [src]="country.flag"></td></tr>
+  </table>
+
+  <table>
+    <tr><th VALIGN="TOP">Currencies:</th><td VALIGN="TOP"><table>
+      <tr *ngFor="let currency of country.currencies"><td>{{ currency.code }}: {{ currency.name }} ({{ currency.symbol }})</td></tr>
+    </table></td></tr>
+  </table>
+</div>

@@ -1,0 +1,49 @@
+@import "~src/styles/variables";
+
+$size-button: 25px;
+
+:host {
+  #close-button-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+
+    button {
+      width: $size-button;
+      height: $size-button;
+      padding: 0;
+      color: $colour-highlight;
+      background-color: $colour-background;
+    }
+  }
+
+  #details-container {
+    display: flex;
+    justify-content: space-evenly;
+
+    table {
+      th,
+      td {
+        padding: 10px;
+      }
+
+      th {
+        font-weight: 400;
+        text-align: end;
+      }
+
+      td {
+        font-weight: 600;
+
+        img {
+          width: 50px;
+          border: 1px solid $colour-background;
+        }
+
+        td {
+          padding: 0;
+        }
+      }
+    }
+  }
+}

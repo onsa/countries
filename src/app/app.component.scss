@@ -1,3 +1,5 @@
+@import "~src/styles/variables";
+
 :host {
   #dropdown-container {
     display: flex;
@@ -7,6 +9,12 @@
     label {
       margin-right: 16px;
     }
+
+    countries-dropdown {
+      & + button {
+        margin-left: 16px;
+      }
+    }
   }
 
   #map-container {
@@ -14,5 +22,21 @@
     height: calc(100vh - 150px);
     margin: auto;
     margin-top: 30px;
+  }
+
+  #country-details-container {
+    position: absolute;
+    bottom: -30vh;
+    left: 0;
+    width: 100vw;
+    height: 30vh;
+    color: $colour-background;
+    background-color: $colour-highlight;
+    box-shadow: $shadow;
+    transition: all 350ms;
+
+    &.visible {
+      bottom: 0;
+    }
   }
 }

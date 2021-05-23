@@ -11,11 +11,13 @@ import { environment } from '../environments/environment';
 import { MapComponent } from './map/map.component';
 //  Third party imports
 import { NgxsModule } from '@ngxs/store';
+import { CountryDetailsComponent } from './country-details/country-details.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MapComponent
+    MapComponent,
+    CountryDetailsComponent
   ],
   imports: [
     BrowserModule,

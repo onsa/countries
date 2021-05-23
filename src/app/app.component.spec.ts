@@ -44,12 +44,26 @@ describe('AppComponent', (): void => {
     expect(component['listenToCountries']).toHaveBeenCalled();
   });
 
-  it('should pick continent', waitForAsync((): void => {
-    component['countrySelector'] = { input: { nativeElement: { value: 'Neverland' } } } as DropdownComponent;
+  it('should pick continent', (): void => {
     spyOn(component['store'], 'dispatch').and.returnValue(of(null));
+    spyOn(component, 'clearSelectedCountry');
     component.pickContinent(Continent.ASIA);
     expect(component['store'].dispatch).toHaveBeenCalledWith(new PickContinent(Continent.ASIA));
-    setTimeout( (): boolean => expect(component['countrySelector'].input.nativeElement.value).toBeNull() );
+    expect(component.clearSelectedCountry).toHaveBeenCalled();
+  });
+
+  it('should clear selected country', waitForAsync((): void => {
+    component.preselectedCountry = new Country();
+    component.selectedCountry = new Country();
+    component.clearSelectedCountry();
+    expect(component.preselectedCountry).toBeNull();
+    expect(component.selectedCountry).toBeNull();
+
+    component.selectedCountry = new Country();
+    component['countrySelector'] = { input: { nativeElement: { value: 'Neverland' } } } as DropdownComponent;
+    component.clearSelectedCountry();
+    expect(component['countrySelector'].input.nativeElement.value).toBeNull();
+    expect(component.selectedCountry).toBeNull();
   }));
 
   it('should listen to countries', waitForAsync((): void => {

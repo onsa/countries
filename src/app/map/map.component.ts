@@ -1,7 +1,8 @@
 //  Angular imports
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 //  Application imports
 import { ApplicationState, ApplicationStateModel } from '../state-management/application-state';
+import { Country } from '../models/country';
 import { HighlightCountry } from '../state-management/actions';
 //  Third party imports
 import { Observable, Subscription } from 'rxjs';
@@ -18,6 +19,9 @@ export class MapComponent implements OnDestroy {
   @Select(ApplicationState)
   public state$: Observable<ApplicationStateModel>;
 
+  // country currently selected
+  @Input()
+  public selectedCountry: Country;
   // 2-letter code of country currently hovered
   public highlightedCountry: string;
 

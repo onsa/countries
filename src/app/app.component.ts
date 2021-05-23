@@ -28,6 +28,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // list of dropdown options for countries
   public selectableCountries: Array<Selectable> = [];
+  // country selected with dropdown but not confimed with load button
+  public preselectedCountry: Country = null;
+  // country selected and confirmed with load button
+  public selectedCountry: Country = null;
 
   // state listener
   @Select(ApplicationState)
@@ -37,6 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('countrySelector', { static: false })
   private countrySelector: DropdownComponent;
 
+  // long-term subscriptions to be unsubscribed from when component is disposed of
   private subscriptions: Array<Subscription> = [];
 
   constructor(private store: Store) { }
@@ -50,9 +55,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.store.dispatch(new PickContinent(continent))
         .subscribe(
-          (): number => setTimeout( (): void => this.countrySelector.input.nativeElement.value = null )
+          (): void => this.clearSelectedCountry()
         )
     );
+  }
+
+  // clear view of selected country
+  public clearSelectedCountry(): void {
+    this.preselectedCountry = null;
+    this.selectedCountry = null;
+    if (!!this.countrySelector) {
+      // update dropdown value
+      this.countrySelector.input.nativeElement.value = null;
+    }
   }
 
   // unsubscribe from component observables

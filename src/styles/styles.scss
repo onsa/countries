@@ -7,6 +7,7 @@
 
 body {
   margin: 0;
+  overflow: hidden;
   color: $colour-highlight;
 }
 
@@ -23,6 +24,25 @@ input {
 
   &::-ms-input-placeholder {  // sass-lint:disable-line no-vendor-prefixes
     color: $colour-highlight; /* For Microsoft Edge */
+  }
+}
+
+button {
+  height: $height-input;
+  color: $colour-background;
+  background-color: $colour-highlight;
+  border-color: $colour-background;
+
+  &:active,
+  &:hover {
+    &:not(:disabled) {
+      cursor: pointer;
+      border-style: inset;
+    }
+  }
+
+  &:disabled {
+    background-color: lighten($colour-highlight, 8%);
   }
 }
 

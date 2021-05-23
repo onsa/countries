@@ -16,17 +16,26 @@
     <div *ngIf="!!selectableCountries?.length">
       <label for="country-dropdown">Country</label>
       <countries-dropdown #countrySelector
+        [value]="selectedCountry"
         [elements]="selectableCountries"
         placeholder="Please select a country"
+        (selectElement)="preselectedCountry = $event"
         inputId="country-dropdown">
         <ng-template #dropdownElementTemplate let-country>
             {{ country }}
         </ng-template>
       </countries-dropdown>
+      <button [disabled]="!preselectedCountry" (click)="selectedCountry = preselectedCountry">Load Country</button>
     </div>
   </div>
 
   <div id="map-container">
-    <countries-map></countries-map>
+    <countries-map [selectedCountry]="selectedCountry"></countries-map>
+  </div>
+
+  <div id="country-details-container" [class.visible]="!!selectedCountry?.name.length">
+    <countries-country-details
+      [country]="selectedCountry"
+      (closeEvent)="clearSelectedCountry()"></countries-country-details>
   </div>
 </ng-container>
