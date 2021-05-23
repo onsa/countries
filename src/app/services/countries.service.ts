@@ -37,4 +37,18 @@ export class CountriesService {
         )
       );
   }
+
+  // find country by 2-letter code
+  public findCountryBy(code: string): Observable<Country> {
+    // call API endpoint
+    return this.http.get(`${this.baseUrl}/alpha/${code}`)
+      .pipe(
+        // don't hold on to http observable
+        first(),
+        // turn plain object into model instance
+        map(
+          (country: any): Country => GenericDeserialize(country, Country)
+        )
+      ) as Observable<Country>;
+  }
 }

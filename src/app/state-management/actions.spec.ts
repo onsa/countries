@@ -1,6 +1,6 @@
 //  Application imports
 import { Continent } from '../enums/continent';
-import { HighlightCountry, PickContinent } from './actions';
+import { FindCountry, HighlightCountry, PickContinent } from './actions';
 
 describe('PickContinent', (): void => {
   it('should construct properly', (): void => {
@@ -15,5 +15,13 @@ describe('HighlightCountry', (): void => {
     expect(HighlightCountry.type).toBe('HighlightCountry');
     const action: HighlightCountry = new HighlightCountry('IE');
     expect(action.country).toBe('IE');
+  });
+});
+
+describe('FindCountry', (): void => {
+  it('should construct properly', (): void => {
+    expect(FindCountry.type).toBe('FindCountry');
+    const action: FindCountry = new FindCountry('IE');
+    expect(action.code).toBe('IE');
   });
 });

@@ -30,7 +30,8 @@
   </div>
 
   <div id="map-container">
-    <countries-map [selectedCountry]="selectedCountry"></countries-map>
+    <countries-map [selectedCountry]="selectedCountry"
+      (selectEvent)="findCountry($event)"></countries-map>
   </div>
 
   <div id="country-details-container" [class.visible]="!!selectedCountry?.name.length">

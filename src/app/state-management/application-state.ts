@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Continent } from '../enums/continent';
 import { CountriesService } from '../services/countries.service';
 import { Country } from '../models/country';
-import { HighlightCountry, PickContinent } from './actions';
+import { FindCountry, HighlightCountry, PickContinent } from './actions';
 //  Third party imports
 import { Action, State, StateContext } from '@ngxs/store';
 
@@ -12,7 +12,8 @@ export class ApplicationStateModel {
   constructor(
     public selectedContinent: Continent = null,
     public highlightedCountry: string = '',
-    public countries: Array<Country> = []
+    public countries: Array<Country> = [],
+    public selectedCountry: Country = null
   ) { }
 }
 
@@ -51,5 +52,27 @@ export class ApplicationState {
       ...previousState,
       highlightedCountry: action.country
     });
+  }
+
+  // set a country as selected (show details)
+  @Action(FindCountry)
+  public findCountry(context: StateContext<ApplicationStateModel>, action: FindCountry): void {
+    const previousState: ApplicationStateModel = context.getState();
+    if (!action.code) {
+      context.setState({
+        ...previousState,
+        selectedCountry: null
+      });
+    } else {
+      this.countriesService.findCountryBy(action.code)
+        .subscribe(
+          (country: Country): void => {
+            context.setState({
+              ...previousState,
+              selectedCountry: country
+            });
+          }
+        );
+    }
   }
 }

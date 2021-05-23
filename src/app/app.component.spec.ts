@@ -8,7 +8,7 @@ import { ApplicationStateModel } from './state-management/application-state';
 import { Continent } from './enums/continent';
 import { Country } from './models/country';
 import { DropdownComponent } from './dropdown/dropdown.component';
-import { PickContinent } from './state-management/actions';
+import { FindCountry, PickContinent } from './state-management/actions';
 //  Third party imports
 import { concatMap, delay } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
@@ -40,8 +40,10 @@ describe('AppComponent', (): void => {
 
   it('should initialise component', (): void => {
     spyOn(component as any, 'listenToCountries');
+    spyOn(component as any, 'listenToCountry');
     component.ngOnInit();
     expect(component['listenToCountries']).toHaveBeenCalled();
+    expect(component['listenToCountry']).toHaveBeenCalled();
   });
 
   it('should pick continent', (): void => {
@@ -50,6 +52,12 @@ describe('AppComponent', (): void => {
     component.pickContinent(Continent.ASIA);
     expect(component['store'].dispatch).toHaveBeenCalledWith(new PickContinent(Continent.ASIA));
     expect(component.clearSelectedCountry).toHaveBeenCalled();
+  });
+
+  it('should find country', (): void => {
+    spyOn(component['store'], 'dispatch');
+    component.findCountry('NL');
+    expect(component['store'].dispatch).toHaveBeenCalledWith(new FindCountry('NL'));
   });
 
   it('should clear selected country', waitForAsync((): void => {
@@ -107,6 +115,38 @@ describe('AppComponent', (): void => {
           expect(component.selectableCountries.length).toBe(3);
           expect(component.selectableCountries.last.value.capital).toBe('Athens');
         }, 12 );
+      }, 12 );
+    }, 12 );
+  }));
+
+  it('should listen to country', waitForAsync((): void => {
+    // create value to return
+    const someCountry: Country = new Country();
+    someCountry.capital = 'Rome';
+    const otherCountry: Country = new Country();
+    otherCountry.capital = 'Madrid';
+    // spy on state and return twice the same array and once another
+    spyOnProperty(component, 'state$', 'get').and.returnValue(
+      from([
+        { selectedCountry: someCountry } as ApplicationStateModel,
+        { selectedCountry: someCountry } as ApplicationStateModel,
+        { selectedCountry: otherCountry } as ApplicationStateModel
+      ])
+        .pipe(
+          concatMap((state: ApplicationStateModel): Observable<ApplicationStateModel> => of(state).pipe(delay(10)))
+        )
+    );
+    // listen to state
+    component['listenToCountry']();
+
+    // expect selected country to change
+    setTimeout( (): void => {
+      expect(component.selectedCountry.capital).toBe('Rome');
+      setTimeout( (): void => {
+        expect(component.selectedCountry.capital).toBe('Rome');
+        setTimeout( (): boolean =>
+          expect(component.selectedCountry.capital).toBe('Madrid')
+        , 12 );
       }, 12 );
     }, 12 );
   }));

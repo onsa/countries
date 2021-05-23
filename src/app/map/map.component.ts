@@ -1,5 +1,5 @@
 //  Angular imports
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 //  Application imports
 import { ApplicationState, ApplicationStateModel } from '../state-management/application-state';
 import { Country } from '../models/country';
@@ -24,6 +24,10 @@ export class MapComponent implements OnDestroy {
   public selectedCountry: Country;
   // 2-letter code of country currently hovered
   public highlightedCountry: string;
+
+  // event for selecting country
+  @Output()
+  public selectEvent: EventEmitter<string> = new EventEmitter();
 
   // long-term subscriptions to be unsubscribed from when component is disposed of
   private subscriptions: Array<Subscription> = [];

@@ -1,6 +1,6 @@
 //  Application imports
 import { ApplicationStateModel } from './application-state';
-import { HighlightCountry, PickContinent } from './actions';
+import { FindCountry, HighlightCountry, PickContinent } from './actions';
 //  Third party imports
 import { State, StateContext } from '@ngxs/store';
 
@@ -9,7 +9,8 @@ import { State, StateContext } from '@ngxs/store';
   defaults: {
     selectedContinent: null,
     highlightedCountry: '',
-    countries: []
+    countries: [],
+    selectedCountry: null
   }
 })
 export class ApplicationStateMock {
@@ -17,4 +18,6 @@ export class ApplicationStateMock {
   public pickContinent(_: StateContext<ApplicationStateModel>, __: PickContinent): void {}
 
   public highlightCountry(_: StateContext<ApplicationStateModel>, __: HighlightCountry): void {}
+
+  public findCountry(_: StateContext<ApplicationStateModel>, __: FindCountry): void {}
 }

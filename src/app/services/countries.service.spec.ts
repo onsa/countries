@@ -47,4 +47,28 @@ describe('CountriesService', (): void => {
         }
       );
   });
+
+  it('should find country by code', (): void => {
+    spyOn(service['http'], 'get').and.returnValue(of({
+      name: 'Neverland',
+      capital: 'Jolly Roger',
+      population: 99,
+      currencies: [{
+        code: 'G',
+        name: 'gold',
+        symbol: 'G'
+      }],
+      flag: 'skull'
+    }));
+    service.findCountryBy('NL')
+      .subscribe(
+        (country: Country): void => {
+          expect(country instanceof Country).toBeTrue();
+          expect(country.capital).toBe('Jolly Roger');
+          expect(country.currencies.length).toBe(1);
+          expect(country.currencies.first instanceof Currency).toBeTrue();
+          expect(country.currencies.first.name).toBe('gold');
+        }
+      );
+  });
 });

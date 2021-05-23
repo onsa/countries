@@ -11,4 +11,8 @@ export class CountriesServiceMock {
   public listCountriesOf(_: Continent): Observable<Array<Country>> {
     return of([]);
   }
+
+  public findCountryBy(_: string): Observable<Country> {
+    return of(null);
+  }
 }

@@ -5,7 +5,7 @@ import { ApplicationState, ApplicationStateModel } from './state-management/appl
 import { Continent } from './enums/continent';
 import { Country } from './models/country';
 import { DropdownComponent } from './dropdown/dropdown.component';
-import { PickContinent } from './state-management/actions';
+import { FindCountry, PickContinent } from './state-management/actions';
 import { Selectable } from './dropdown/selectable';
 //  Third party imports
 import { distinctUntilChanged, map } from 'rxjs/operators';
@@ -48,6 +48,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.listenToCountries();
+    this.listenToCountry();
   }
 
   // send continent to state reducer
@@ -58,6 +59,11 @@ export class AppComponent implements OnInit, OnDestroy {
           (): void => this.clearSelectedCountry()
         )
     );
+  }
+
+  // send country code to state reducer to find corresponding country data
+  public findCountry(code: string): void {
+    this.store.dispatch(new FindCountry(code));
   }
 
   // clear view of selected country
@@ -93,6 +99,22 @@ export class AppComponent implements OnInit, OnDestroy {
           (countries: Array<Country>): Array<Selectable> => this.selectableCountries = countries.map(
             (country: Country): Selectable => new Selectable(country.name, country)
           )
+        )
+    );
+  }
+
+  // listen to state changes in selected country
+  private listenToCountry(): void {
+    this.subscriptions.push(
+      this.state$
+        .pipe(
+          map(
+            (state: ApplicationStateModel): Country => state.selectedCountry
+          ),
+          distinctUntilChanged()
+        )
+        .subscribe(
+          (country: Country): Country => this.selectedCountry = country
         )
     );
   }

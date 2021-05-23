@@ -13,3 +13,9 @@ export class HighlightCountry {
 
   constructor(public country: string) { }
 }
+
+export class FindCountry {
+  public static readonly type: string = 'FindCountry';
+
+  constructor(public code: string) { }
+}
