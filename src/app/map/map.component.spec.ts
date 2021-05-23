@@ -2,7 +2,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 //  Application imports
-import { ApplicationState } from '../state-management/application-state';
+import { ApplicationStateMock } from '../state-management/application-state.mock';
 import { HighlightCountry } from '../state-management/actions';
 import { MapComponent } from './map.component';
 //  Third party imports
@@ -18,7 +18,7 @@ describe('MapComponent', (): void => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        NgxsModule.forRoot([ApplicationState])
+        NgxsModule.forRoot([ApplicationStateMock])
       ],
       declarations: [
         MapComponent

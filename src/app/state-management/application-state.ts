@@ -2,6 +2,8 @@
 import { Injectable } from '@angular/core';
 //  Application imports
 import { Continent } from '../enums/continent';
+import { CountriesService } from '../services/countries.service';
+import { Country } from '../models/country';
 import { HighlightCountry, PickContinent } from './actions';
 //  Third party imports
 import { Action, State, StateContext } from '@ngxs/store';
@@ -9,7 +11,8 @@ import { Action, State, StateContext } from '@ngxs/store';
 export class ApplicationStateModel {
   constructor(
     public selectedContinent: Continent = null,
-    public highlightedCountry: string = ''
+    public highlightedCountry: string = '',
+    public countries: Array<Country> = []
   ) { }
 }
 
@@ -20,14 +23,24 @@ export class ApplicationStateModel {
 })
 @Injectable()
 export class ApplicationState {
+
+  constructor(private countriesService: CountriesService) { }
+
   // set a continent as selected
   @Action(PickContinent)
   public pickContinent(context: StateContext<ApplicationStateModel>, action: PickContinent): void {
     const previousState: ApplicationStateModel = context.getState();
-    context.setState({
-      ...previousState,
-      selectedContinent: action.continent
-    });
+    this.countriesService.listCountriesOf(action.continent)
+      .subscribe(
+        (countries: Array<Country>): void => {
+          // update state with selected continent & its countries
+          context.setState({
+            ...previousState,
+            selectedContinent: action.continent,
+            countries
+          });
+        }
+      );
   }
 
   // set a country as highlighted (hovered)

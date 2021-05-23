@@ -12,6 +12,18 @@
         </ng-template>
       </countries-dropdown>
     </div>
+
+    <div *ngIf="!!selectableCountries?.length">
+      <label for="country-dropdown">Country</label>
+      <countries-dropdown #countrySelector
+        [elements]="selectableCountries"
+        placeholder="Please select a country"
+        inputId="country-dropdown">
+        <ng-template #dropdownElementTemplate let-country>
+            {{ country }}
+        </ng-template>
+      </countries-dropdown>
+    </div>
   </div>
 
   <div id="map-container">
