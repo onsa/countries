@@ -2,5 +2,6 @@
 import { IEnvironment } from './i-environment';
 
 export const environment: IEnvironment = {
-  production: false
+  production: false,
+  baseUrl: 'https://restcountries.eu/rest/v2'
 };

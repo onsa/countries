@@ -1,5 +1,6 @@
 //  Angular imports
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 //  Application imports
 import { AppComponent } from './app.component';
@@ -19,6 +20,7 @@ import { NgxsModule } from '@ngxs/store';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     DropdownModule,
     NgxsModule.forRoot([ApplicationState], {
       developmentMode: !environment.production
