@@ -1,5 +1,6 @@
 //  Application imports
 import { ApplicationStateModel } from './application-state';
+import { Continent } from '../enums/continent';
 import { FindCountry, HighlightCountry, PickContinent } from './actions';
 //  Third party imports
 import { State, StateContext } from '@ngxs/store';
@@ -10,7 +11,12 @@ import { State, StateContext } from '@ngxs/store';
     selectedContinent: null,
     highlightedCountry: '',
     countries: [],
-    selectedCountry: null
+    selectedCountry: null,
+    continentCache: {
+      [Continent.ASIA]: [],
+      [Continent.EUROPE]: []
+    },
+    countryCache: {}
   }
 })
 export class ApplicationStateMock {

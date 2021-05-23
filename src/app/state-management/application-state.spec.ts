@@ -21,7 +21,7 @@ describe('ApplicationState', (): void => {
     service = TestBed.inject(CountriesService);
   });
 
-  it('should pick continent', waitForAsync((): void => {
+  it('should pick continent not cached', waitForAsync((): void => {
     const context: StateContext<ApplicationStateModel> = {
       getState: (): ApplicationStateModel => null,
       setState: (_: ApplicationStateModel): ApplicationStateModel => null
@@ -30,20 +30,77 @@ describe('ApplicationState', (): void => {
       selectedContinent: Continent.ASIA,
       highlightedCountry: '',
       countries: [],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {}
     });
     spyOn(context, 'setState');
     const country: Country = new Country();
+    country.alpha2Code = 'NL';
     spyOn(service, 'listCountriesOf').and.returnValue(of([ country ]));
     const state: ApplicationState = new ApplicationState(service);
 
     state.pickContinent(context, new PickContinent(Continent.EUROPE));
 
+    expect(service.listCountriesOf).toHaveBeenCalledWith(Continent.EUROPE);
     expect(context.setState).toHaveBeenCalledWith({
       selectedContinent: Continent.EUROPE,
       highlightedCountry: '',
       countries: [ country ],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: [ 'NL' ]
+      },
+      countryCache: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'NL': country
+      }
+    });
+  }));
+
+  it('should pick continent previously cached', waitForAsync((): void => {
+    const context: StateContext<ApplicationStateModel> = {
+      getState: (): ApplicationStateModel => null,
+      setState: (_: ApplicationStateModel): ApplicationStateModel => null
+    } as StateContext<ApplicationStateModel>;
+    const country: Country = new Country();
+    country.alpha2Code = 'NL';
+    spyOn(context, 'getState').and.returnValue({
+      selectedContinent: Continent.ASIA,
+      highlightedCountry: '',
+      countries: [],
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: [ 'NL' ]
+      },
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      countryCache: { 'NL': country }
+    });
+    spyOn(context, 'setState');
+    spyOn(service, 'listCountriesOf');
+    const state: ApplicationState = new ApplicationState(service);
+
+    state.pickContinent(context, new PickContinent(Continent.EUROPE));
+
+    expect(service.listCountriesOf).not.toHaveBeenCalled();
+    expect(context.setState).toHaveBeenCalledWith({
+      selectedContinent: Continent.EUROPE,
+      highlightedCountry: '',
+      countries: [ country ],
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: [ 'NL' ]
+      },
+      countryCache: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'NL': country
+      }
     });
   }));
 
@@ -56,7 +113,12 @@ describe('ApplicationState', (): void => {
       selectedContinent: Continent.ASIA,
       highlightedCountry: '',
       countries: [],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {}
     });
     spyOn(context, 'setState');
     const state: ApplicationState = new ApplicationState(service);
@@ -67,11 +129,16 @@ describe('ApplicationState', (): void => {
       selectedContinent: Continent.ASIA,
       highlightedCountry: 'IE',
       countries: [],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {}
     });
   });
 
-  it('should find country by code', waitForAsync((): void => {
+  it('should find country not cached by code', waitForAsync((): void => {
     const context: StateContext<ApplicationStateModel> = {
       getState: (): ApplicationStateModel => null,
       setState: (_: ApplicationStateModel): ApplicationStateModel => null
@@ -80,7 +147,12 @@ describe('ApplicationState', (): void => {
       selectedContinent: Continent.ASIA,
       highlightedCountry: '',
       countries: [],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {}
     });
     spyOn(context, 'setState');
     const country: Country = new Country();
@@ -89,11 +161,63 @@ describe('ApplicationState', (): void => {
 
     state.findCountry(context, new FindCountry('NL'));
 
+    expect(service.findCountryBy).toHaveBeenCalledWith('NL');
     expect(context.setState).toHaveBeenCalledWith({
       selectedContinent: Continent.ASIA,
       highlightedCountry: '',
       countries: [],
-      selectedCountry: country
+      selectedCountry: country,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'NL': country
+      }
+    });
+  }));
+
+  it('should find country previously cached by code', waitForAsync((): void => {
+    const context: StateContext<ApplicationStateModel> = {
+      getState: (): ApplicationStateModel => null,
+      setState: (_: ApplicationStateModel): ApplicationStateModel => null
+    } as StateContext<ApplicationStateModel>;
+    const country: Country = new Country();
+    spyOn(context, 'getState').and.returnValue({
+      selectedContinent: Continent.ASIA,
+      highlightedCountry: '',
+      countries: [],
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'NL': country
+      }
+    });
+    spyOn(context, 'setState');
+    spyOn(service, 'findCountryBy');
+    const state: ApplicationState = new ApplicationState(service);
+
+    state.findCountry(context, new FindCountry('NL'));
+
+    expect(service.findCountryBy).not.toHaveBeenCalled();
+    expect(context.setState).toHaveBeenCalledWith({
+      selectedContinent: Continent.ASIA,
+      highlightedCountry: '',
+      countries: [],
+      selectedCountry: country,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'NL': country
+      }
     });
   }));
 
@@ -106,7 +230,12 @@ describe('ApplicationState', (): void => {
       selectedContinent: Continent.ASIA,
       highlightedCountry: '',
       countries: [],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {}
     });
     spyOn(context, 'setState');
     spyOn(service, 'findCountryBy');
@@ -119,7 +248,12 @@ describe('ApplicationState', (): void => {
       selectedContinent: Continent.ASIA,
       highlightedCountry: '',
       countries: [],
-      selectedCountry: null
+      selectedCountry: null,
+      continentCache: {
+        [Continent.ASIA]: [],
+        [Continent.EUROPE]: []
+      },
+      countryCache: {}
     });
   }));
 });
