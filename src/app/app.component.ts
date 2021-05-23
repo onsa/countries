@@ -1,5 +1,6 @@
 //  Angular imports
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Event, Router, Scroll } from '@angular/router';
 //  Application imports
 import { ApplicationState, ApplicationStateModel } from './state-management/application-state';
 import { Continent } from './enums/continent';
@@ -8,7 +9,7 @@ import { DropdownComponent } from './dropdown/dropdown.component';
 import { FindCountry, PickContinent } from './state-management/actions';
 import { Selectable } from './dropdown/selectable';
 //  Third party imports
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
 
@@ -44,9 +45,22 @@ export class AppComponent implements OnInit, OnDestroy {
   // long-term subscriptions to be unsubscribed from when component is disposed of
   private subscriptions: Array<Subscription> = [];
 
-  constructor(private store: Store) { }
+  constructor(
+    private store: Store,
+    private router: Router
+  ) { }
 
   public ngOnInit(): void {
+    // check initial fragment
+    this.router.events
+      .pipe(
+        filter(
+          (event: Event): boolean => event instanceof Scroll
+        )
+      )
+      .subscribe(
+        (event: Scroll): void => this.findCountry(event.anchor)
+      );
     this.listenToCountries();
     this.listenToCountry();
   }
@@ -61,6 +75,16 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
+  // set selected country in view and update url
+  public pickCountry(country: Country): void {
+    this.selectedCountry = country;
+    this.router.navigate(['world'], { fragment: !!country ? country.alpha2Code : null });
+    // update dropdown value
+    if (!!this.countrySelector) {
+      this.countrySelector.input.nativeElement.value = !!country ? country.name : null;
+    }
+  }
+
   // send country code to state reducer to find corresponding country data
   public findCountry(code: string): void {
     this.store.dispatch(new FindCountry(code));
@@ -69,7 +93,7 @@ export class AppComponent implements OnInit, OnDestroy {
   // clear view of selected country
   public clearSelectedCountry(): void {
     this.preselectedCountry = null;
-    this.selectedCountry = null;
+    this.pickCountry(null);
     if (!!this.countrySelector) {
       // update dropdown value
       this.countrySelector.input.nativeElement.value = null;
@@ -114,7 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
           distinctUntilChanged()
         )
         .subscribe(
-          (country: Country): Country => this.selectedCountry = country
+          (country: Country): void => this.pickCountry(country)
         )
     );
   }

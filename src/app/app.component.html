@@ -25,7 +25,7 @@
             {{ country }}
         </ng-template>
       </countries-dropdown>
-      <button [disabled]="!preselectedCountry" (click)="selectedCountry = preselectedCountry">Load Country</button>
+      <button [disabled]="!preselectedCountry" (click)="pickCountry(preselectedCountry)">Load Country</button>
     </div>
   </div>
 

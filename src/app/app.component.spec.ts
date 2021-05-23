@@ -1,5 +1,6 @@
 //  Angular imports
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NavigationEnd, Router, Scroll } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 //  Application imports
 import { AppComponent } from './app.component';
@@ -26,7 +27,7 @@ describe('AppComponent', (): void => {
       ],
       declarations: [
         AppComponent
-      ],
+      ]
     }).compileComponents();
 
     store = TestBed.inject(Store);
@@ -38,10 +39,27 @@ describe('AppComponent', (): void => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialise component', (): void => {
+  it('should initialise component and not search country without fragment', (): void => {
+    const navigationEnd: NavigationEnd = new NavigationEnd(1, 'some-url', 'other-url');
+    component['router'] = { events: of(navigationEnd) } as any as Router;
+    spyOn(component, 'findCountry');
     spyOn(component as any, 'listenToCountries');
     spyOn(component as any, 'listenToCountry');
     component.ngOnInit();
+    expect(component.findCountry).not.toHaveBeenCalled();
+    expect(component['listenToCountries']).toHaveBeenCalled();
+    expect(component['listenToCountry']).toHaveBeenCalled();
+  });
+
+  it('should initialise component and search country with fragment', (): void => {
+    const navigationEnd: NavigationEnd = new NavigationEnd(1, 'some-url', 'other-url');
+    const scroll: Scroll = new Scroll(navigationEnd, [0, 0], 'NL');
+    component['router'] = { events: of(scroll) } as any as Router;
+    spyOn(component, 'findCountry');
+    spyOn(component as any, 'listenToCountries');
+    spyOn(component as any, 'listenToCountry');
+    component.ngOnInit();
+    expect(component.findCountry).toHaveBeenCalledWith('NL');
     expect(component['listenToCountries']).toHaveBeenCalled();
     expect(component['listenToCountry']).toHaveBeenCalled();
   });
@@ -54,25 +72,45 @@ describe('AppComponent', (): void => {
     expect(component.clearSelectedCountry).toHaveBeenCalled();
   });
 
+  it('should pick country', (): void => {
+    component.selectedCountry = null;
+    spyOn(component['router'], 'navigate');
+    const country: Country = new Country();
+    country.name = 'Neverland';
+    country.alpha2Code = 'NL';
+    component.pickCountry(country);
+    expect(component.selectedCountry).toBe(country);
+    expect(component['router'].navigate).toHaveBeenCalledWith(['world'], { fragment: 'NL' });
+
+    component['countrySelector'] = { input: { nativeElement: { value: 'Neverland' } } } as DropdownComponent;
+    component.pickCountry(null);
+    expect(component.selectedCountry).toBeNull();
+    expect(component['router'].navigate).toHaveBeenCalledWith(['world'], { fragment: null });
+    expect(component['countrySelector'].input.nativeElement.value).toBeNull();
+
+    component.pickCountry(country);
+    expect(component.selectedCountry).toBe(country);
+    expect(component['router'].navigate).toHaveBeenCalledWith(['world'], { fragment: 'NL' });
+    expect(component['countrySelector'].input.nativeElement.value).toBe('Neverland');
+  });
+
   it('should find country', (): void => {
     spyOn(component['store'], 'dispatch');
     component.findCountry('NL');
     expect(component['store'].dispatch).toHaveBeenCalledWith(new FindCountry('NL'));
   });
 
-  it('should clear selected country', waitForAsync((): void => {
+  it('should clear selected country', (): void => {
     component.preselectedCountry = new Country();
-    component.selectedCountry = new Country();
+    spyOn(component, 'pickCountry');
     component.clearSelectedCountry();
     expect(component.preselectedCountry).toBeNull();
-    expect(component.selectedCountry).toBeNull();
+    expect(component.pickCountry).toHaveBeenCalledWith(null);
 
-    component.selectedCountry = new Country();
     component['countrySelector'] = { input: { nativeElement: { value: 'Neverland' } } } as DropdownComponent;
     component.clearSelectedCountry();
     expect(component['countrySelector'].input.nativeElement.value).toBeNull();
-    expect(component.selectedCountry).toBeNull();
-  }));
+  });
 
   it('should listen to countries', waitForAsync((): void => {
     // create arrays to return and spy on their map method
@@ -136,17 +174,19 @@ describe('AppComponent', (): void => {
           concatMap((state: ApplicationStateModel): Observable<ApplicationStateModel> => of(state).pipe(delay(10)))
         )
     );
+    spyOn(component, 'pickCountry');
     // listen to state
     component['listenToCountry']();
 
     // expect selected country to change
     setTimeout( (): void => {
-      expect(component.selectedCountry.capital).toBe('Rome');
+      expect(component.pickCountry).toHaveBeenCalledWith(someCountry);
       setTimeout( (): void => {
-        expect(component.selectedCountry.capital).toBe('Rome');
-        setTimeout( (): boolean =>
-          expect(component.selectedCountry.capital).toBe('Madrid')
-        , 12 );
+        expect(component.pickCountry).toHaveBeenCalledTimes(1);
+        setTimeout( (): void => {
+          expect(component.pickCountry).toHaveBeenCalledWith(otherCountry);
+          expect(component.pickCountry).toHaveBeenCalledTimes(2);
+        }, 12 );
       }, 12 );
     }, 12 );
   }));
